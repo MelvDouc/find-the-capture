@@ -1,0 +1,17 @@
+$size: calc(100% - var(--section-padding) *2);
+
+.ChessBoard {
+  width: $size;
+  aspect-ratio: 1;
+  display: grid;
+  grid-template-rows: repeat(8, 1fr);
+  grid-template-columns: repeat(8, 1fr);
+  position: relative;
+}
+
+@container board-container (orientation: landscape) {
+  .ChessBoard {
+    width: initial;
+    height: $size;
+  }
+}

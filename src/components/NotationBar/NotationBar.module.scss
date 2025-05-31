@@ -1,0 +1,40 @@
+.NotationBar {
+  $size: calc(var(--section-padding) * 2);
+  display: none;
+  position: absolute;
+  color: white;
+  font-size: 0.9em;
+
+  &[data-direction="h"] {
+    width: 100%;
+    height: $size;
+    top: 100%;
+    left: 0;
+  }
+
+  &[data-direction="v"] {
+    width: $size;
+    height: 100%;
+    top: 0;
+    right: 100%;
+    flex-direction: column-reverse;
+  }
+
+  &Item {
+    height: 100%;
+    width: 100%;
+    text-align: center;
+    align-content: center;
+    background-color: rgb(53, 0, 0);
+
+    &:nth-child(even) {
+      background-color: rgb(43, 0, 0);
+    }
+  }
+}
+
+@media only screen and (min-width :200px) {
+  .NotationBar {
+    display: flex;
+  }
+}

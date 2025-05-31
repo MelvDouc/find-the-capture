@@ -1,0 +1,59 @@
+.Square {
+  background-color: rgb(240, 250, 255);
+  background-repeat: no-repeat;
+  background-size: 100%;
+  background-position: center;
+  align-content: end;
+
+  &.dark {
+    background-color: rgb(0, 120, 150);
+  }
+
+  &[data-piece="P"] {
+    background-image: url("/pieces/white-pawn.svg");
+  }
+
+  &[data-piece="N"] {
+    background-image: url("/pieces/white-knight.svg");
+  }
+
+  &[data-piece="K"] {
+    background-image: url("/pieces/white-king.svg");
+  }
+
+  &[data-piece="B"] {
+    background-image: url("/pieces/white-bishop.svg");
+  }
+
+  &[data-piece="R"] {
+    background-image: url("/pieces/white-rook.svg");
+  }
+
+  &[data-piece="Q"] {
+    background-image: url("/pieces/white-queen.svg");
+  }
+
+  &[data-piece="p"] {
+    background-image: url("/pieces/black-pawn.svg");
+  }
+
+  &[data-piece="n"] {
+    background-image: url("/pieces/black-knight.svg");
+  }
+
+  &[data-piece="k"] {
+    background-image: url("/pieces/black-king.svg");
+  }
+
+  &[data-piece="b"] {
+    background-image: url("/pieces/black-bishop.svg");
+  }
+
+  &[data-piece="r"] {
+    background-image: url("/pieces/black-rook.svg");
+  }
+
+  &[data-piece="q"] {
+    background-image: url("/pieces/black-queen.svg");
+  }
+}
