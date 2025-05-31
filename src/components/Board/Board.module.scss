@@ -1,7 +1,8 @@
 $size: calc(100% - var(--section-padding) *2);
 
-.ChessBoard {
+.Board {
   width: $size;
+  height: max-content;
   aspect-ratio: 1;
   display: grid;
   grid-template-rows: repeat(8, 1fr);
@@ -9,8 +10,19 @@ $size: calc(100% - var(--section-padding) *2);
   position: relative;
 }
 
+.selectedSquare {
+  $size1: 4px;
+  $size2: $size1 * -1;
+  $spread: 4px;
+  $blur: 2px;
+  $clr: gold;
+  box-shadow:
+    $size1 $size1 $spread $blur $clr inset,
+    $size2 $size2 $spread $blur $clr inset;
+}
+
 @container board-container (orientation: landscape) {
-  .ChessBoard {
+  .Board {
     width: initial;
     height: $size;
   }

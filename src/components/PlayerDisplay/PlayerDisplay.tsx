@@ -1,9 +1,23 @@
 import type { Obs } from "reactfree-jsx";
 
+import cssClasses from "./PlayerDisplay.module.scss";
+
 export default function PlayerDisplay({ playerObs }: {
-  playerObs: Obs<string>;
+  playerObs: Obs<boolean>;
 }) {
+  const titleObs = playerObs.map((isWhiteToMove) => {
+    return isWhiteToMove
+      ? "Trait aux blancs"
+      : "Trait aux noirs";
+  });
+
   return (
-    <p>Trait aux <strong>{playerObs}</strong></p>
+    <div className={cssClasses.PlayerDisplay} title={titleObs}>
+      {playerObs.map((isWhiteToMove) => getEmoji(isWhiteToMove))}
+    </div>
   );
+}
+
+function getEmoji(isWhiteToMove: boolean): string {
+  return isWhiteToMove ? "⚪" : "⚫";
 }

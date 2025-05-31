@@ -4,26 +4,30 @@ import {
   PawnMove,
   PieceMove,
   Position as ChacoMatPosition,
-  type Move
+  type Move as ChacoMatMove
 } from "chacomat";
 
-export function getRandomPosition(): Position {
-  const { fen, srcIndex, destIndex } = getRandomCapture();
+export function getRandomPositionAndMove(isWhiteToMove: boolean): [Position, Move] {
+  const { fen, srcIndex, destIndex } = getRandomCapture(isWhiteToMove);
   const position = ChacoMatPosition.fromFEN(fen);
 
   const board = position.board.toArray().flatMap((row) => {
     return row.map((value) => value?.initial ?? "");
   });
 
-  return {
-    board,
+  const move = {
     srcIndex,
     destIndex,
-    activeColor: position.activeColor.isWhite() ? "blancs" : "noirs"
   };
+  const pos = {
+    board,
+    isWhiteToMove: position.activeColor.isWhite()
+  };
+
+  return [pos, move];
 }
 
-function getRandomCapture(): {
+function getRandomCapture(isWhiteToMove: boolean): {
   fen: string;
   srcIndex: number;
   destIndex: number;
@@ -37,27 +41,31 @@ function getRandomCapture(): {
 
   while (game.currentResult === GameResults.NONE) {
     const moves = game.currentPosition.legalMoves;
-    const captures = moves.filter(isCapture);
 
-    if (captures.length === 1) {
-      const capture = captures[0] as PieceMove;
-      result.push({
-        fen: game.currentPosition.toFEN(),
-        srcIndex: capture.srcIndex,
-        destIndex: capture.destIndex
-      });
+    if (game.currentPosition.activeColor.isWhite() === isWhiteToMove) {
+      const captures = moves.filter(isCapture);
+
+      if (captures.length === 1) {
+        const capture = captures[0] as PieceMove;
+        result.push({
+          fen: game.currentPosition.toFEN(),
+          srcIndex: capture.srcIndex,
+          destIndex: capture.destIndex
+        });
+      }
     }
-
-    game.currentPosition.board.toArray();
 
     const move = moves[randomIndex(moves.length)];
     game.playMove(move);
   }
 
+  if (result.length === 0)
+    return getRandomCapture(isWhiteToMove);
+
   return result[randomIndex(result.length)];
 }
 
-function isCapture(move: Move): boolean {
+function isCapture(move: ChacoMatMove): boolean {
   return (move instanceof PawnMove || move instanceof PieceMove)
     && move.isCapture();
 }
@@ -66,9 +74,12 @@ function randomIndex(len: number): number {
   return Math.floor(Math.random() * len);
 }
 
-export interface Position {
-  board: string[];
+export type Move = {
   srcIndex: number;
   destIndex: number;
-  activeColor: "blancs" | "noirs";
+};
+
+export interface Position {
+  board: string[];
+  isWhiteToMove: boolean;
 }

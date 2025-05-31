@@ -5,14 +5,14 @@
   color: white;
   font-size: 0.9em;
 
-  &[data-direction="h"] {
+  &[data-direction="v"] {
     width: 100%;
     height: $size;
     top: 100%;
     left: 0;
   }
 
-  &[data-direction="v"] {
+  &[data-direction="h"] {
     width: $size;
     height: 100%;
     top: 0;
