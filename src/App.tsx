@@ -1,4 +1,4 @@
-import Board from "$/components/Board/Board.js";
+import BoardFrame from "$/components/BoardFrame/BoardFrame.tsx";
 import PlayerDisplay from "$/components/PlayerDisplay/PlayerDisplay.js";
 import { getRandomPositionAndMove } from "$/utils/captures.js";
 import { obs } from "reactfree-jsx";
@@ -27,7 +27,7 @@ export default function App() {
         <PlayerDisplay playerObs={gameObs.map(() => isWhiteToMove)} />
       </section>
       <section className={cssClasses.BoardContainer}>
-        <Board gameObs={gameObs} emitSuccess={emitSuccess} />
+        <BoardFrame gameObs={gameObs} emitSuccess={emitSuccess} />
       </section>
       {audio}
     </div>

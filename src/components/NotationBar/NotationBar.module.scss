@@ -1,23 +1,25 @@
 .NotationBar {
   $size: calc(var(--section-padding) * 2);
+  font-size: 10px;
   display: none;
-  position: absolute;
-  color: white;
-  font-size: 0.9em;
 
   &[data-direction="v"] {
-    width: 100%;
-    height: $size;
-    top: 100%;
-    left: 0;
+    width: $size;
+    height: 100%;
+    flex-direction: column;
   }
 
   &[data-direction="h"] {
-    width: $size;
-    height: 100%;
-    top: 0;
-    right: 100%;
-    flex-direction: column-reverse;
+    width: 100%;
+    height: $size;
+  }
+
+  @media only screen and (min-width: 300px) {
+    display: flex;
+  }
+
+  @media only screen and (min-width: 600px) {
+    font-size: 12px;
   }
 
   &Item {
@@ -25,16 +27,11 @@
     width: 100%;
     text-align: center;
     align-content: center;
+    color: white;
     background-color: rgb(53, 0, 0);
 
     &:nth-child(even) {
       background-color: rgb(43, 0, 0);
     }
-  }
-}
-
-@media only screen and (min-width :200px) {
-  .NotationBar {
-    display: flex;
   }
 }

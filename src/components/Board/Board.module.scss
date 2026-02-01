@@ -1,13 +1,16 @@
 $size: calc(100% - var(--section-padding) *2);
 
 .Board {
-  width: $size;
-  height: max-content;
+  width: 100%;
   aspect-ratio: 1;
   display: grid;
   grid-template-rows: repeat(8, 1fr);
   grid-template-columns: repeat(8, 1fr);
-  position: relative;
+
+  @container board-container (orientation: landscape) {
+    height: initial;
+    height: 100%;
+  }
 }
 
 .selectedSquare {
@@ -19,11 +22,4 @@ $size: calc(100% - var(--section-padding) *2);
   box-shadow:
     $size1 $size1 $spread $blur $clr inset,
     $size2 $size2 $spread $blur $clr inset;
-}
-
-@container board-container (orientation: landscape) {
-  .Board {
-    width: initial;
-    height: $size;
-  }
 }

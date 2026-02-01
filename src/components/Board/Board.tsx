@@ -1,10 +1,7 @@
-import { type Obs } from "reactfree-jsx";
-
-import Square from "$/components/Square/Square.js";
-import NotationBar from "$/components/NotationBar/NotationBar.js";
 import Piece from "$/components/Piece/Piece.tsx";
+import Square from "$/components/Square/Square.js";
 import type { Move, Position } from "$/utils/captures.js";
-
+import { type Obs } from "reactfree-jsx";
 import cssClasses from "./Board.module.scss";
 
 export default function Board({ gameObs, emitSuccess }: {
@@ -67,8 +64,6 @@ export default function Board({ gameObs, emitSuccess }: {
             element.append(squares[rank * 8 + file]);
       }}
     >
-      <NotationBar direction="v" />
-      <NotationBar direction="h" />
     </div>
   );
 }
