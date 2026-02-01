@@ -31,5 +31,5 @@ export default function App() {
       </section>
       {audio}
     </div>
-  );
+  ) as HTMLElement;
 }
