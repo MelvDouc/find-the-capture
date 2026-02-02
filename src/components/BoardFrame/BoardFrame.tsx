@@ -1,17 +1,12 @@
-import Board from "$/components/Board/Board.tsx";
-import type { Move, Position } from "$/utils/captures.js";
-import { type Obs } from "reactfree-jsx";
-import cssClasses from "./BoardFrame.module.scss";
+import Board, { type BoardProps } from "$/components/Board/Board.tsx";
 import NotationBar from "$/components/NotationBar/NotationBar.tsx";
+import cssClasses from "./BoardFrame.module.scss";
 
-export default function BoardFrame({ gameObs, emitSuccess }: {
-  gameObs: Obs<[Position, Move]>;
-  emitSuccess: VoidFunction;
-}) {
+export default function BoardFrame(props: BoardProps) {
   return (
     <article className={cssClasses.BoardFrame}>
       <NotationBar direction="v" />
-      <Board gameObs={gameObs} emitSuccess={emitSuccess} />
+      <Board {...props} />
       <span></span>
       <NotationBar direction="h" />
     </article>

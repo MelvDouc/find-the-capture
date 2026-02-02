@@ -1,24 +1,16 @@
 import BoardFrame from "$/components/BoardFrame/BoardFrame.tsx";
-import PlayerDisplay from "$/components/PlayerDisplay/PlayerDisplay.js";
-import { getRandomPositionAndMove } from "$/utils/captures.js";
-import { obs } from "reactfree-jsx";
+import PlayerDisplay from "$/components/PlayerDisplay/PlayerDisplay.tsx";
+import { getRandomPositionAndMove } from "$/utils/captures.ts";
+import { obs, createRef } from "reactfree-jsx";
 import cssClasses from "./App.module.scss";
 
 export default function App() {
   let isWhiteToMove = true;
   const gameObs = obs(getRandomPositionAndMove(isWhiteToMove));
-
-  const audio = (
-    <audio src={import.meta.env.BASE_URL + "audio/success2.wav"} preload="auto"></audio>
-  ) as HTMLAudioElement;
-
-  audio.addEventListener("ended", () => {
-    isWhiteToMove = !isWhiteToMove;
-    gameObs.value = getRandomPositionAndMove(isWhiteToMove);
-  });
+  const audioRef = createRef<HTMLAudioElement>();
 
   const emitSuccess = (): void => {
-    audio.play();
+    audioRef.value?.play();
   };
 
   return (
@@ -29,7 +21,15 @@ export default function App() {
       <section className={cssClasses.BoardContainer}>
         <BoardFrame gameObs={gameObs} emitSuccess={emitSuccess} />
       </section>
-      {audio}
+      <audio
+        src={import.meta.env.BASE_URL + "audio/success2.wav"}
+        $ref={audioRef}
+        preload="auto"
+        on:ended={() => {
+          isWhiteToMove = !isWhiteToMove;
+          gameObs.value = getRandomPositionAndMove(isWhiteToMove);
+        }}
+      ></audio>
     </div>
   ) as HTMLElement;
 }

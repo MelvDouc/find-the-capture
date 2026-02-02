@@ -1,4 +1,4 @@
-import App from "$/App.js";
-import "$/main.scss";
+import App from "$/App.tsx";
+import "./main.scss";
 
 document.body.appendChild(App());

@@ -79,7 +79,7 @@ export type Move = {
   destIndex: number;
 };
 
-export interface Position {
+export type Position = {
   board: string[];
   isWhiteToMove: boolean;
-}
+};

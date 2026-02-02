@@ -1,13 +1,10 @@
 import Piece from "$/components/Piece/Piece.tsx";
-import Square from "$/components/Square/Square.js";
-import type { Move, Position } from "$/utils/captures.js";
+import Square from "$/components/Square/Square.tsx";
+import type { Move, Position } from "$/utils/captures.ts";
 import { type Obs } from "reactfree-jsx";
 import cssClasses from "./Board.module.scss";
 
-export default function Board({ gameObs, emitSuccess }: {
-  gameObs: Obs<[Position, Move]>;
-  emitSuccess: VoidFunction;
-}) {
+export default function Board({ gameObs, emitSuccess }: BoardProps) {
   let highlightedSquare: HTMLElement | null = null;
 
   const setHighlighted = (square: HTMLElement) => {
@@ -95,3 +92,8 @@ function createDropHandler(
     }
   };
 }
+
+export type BoardProps = {
+  gameObs: Obs<[Position, Move]>;
+  emitSuccess: VoidFunction;
+};

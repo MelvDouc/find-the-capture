@@ -1,5 +1,4 @@
 import type { Obs } from "reactfree-jsx";
-
 import cssClasses from "./PlayerDisplay.module.scss";
 
 export default function PlayerDisplay({ playerObs }: {
