@@ -1,28 +1,21 @@
+import classNames from "classnames";
+import type { ReactNode } from "react";
 import cssClasses from "./Square.module.scss";
 
-export default function Square({ rank, file, setHighlighted }: {
+export default function Square({ rank, file, highlighted, handleClick, children }: {
   rank: number;
   file: number;
-  setHighlighted: (square: HTMLElement) => void;
+  highlighted: boolean;
+  handleClick: VoidFunction;
+  children?: ReactNode;
 }) {
-  const className = {
+  const className = classNames({
     [cssClasses.Square]: true,
-    [cssClasses.dark]: rank % 2 === file % 2
-  };
-
-  const $init = (element: HTMLElement): void => {
-
-    element.addEventListener("dragenter", () => {
-      element.dataset.highlighted = "1";
-      setHighlighted(element);
-    });
-
-    element.addEventListener("dragleave", () => {
-      element.dataset.highlighted = "0";
-    });
-  };
+    [cssClasses.dark]: rank % 2 === file % 2,
+    [cssClasses.highlighted]: highlighted
+  });
 
   return (
-    <div className={className} $init={$init}></div>
-  ) as HTMLElement;
+    <div className={className} onClick={handleClick}>{children}</div>
+  );
 }

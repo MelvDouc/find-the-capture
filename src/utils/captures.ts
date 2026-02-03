@@ -1,33 +1,36 @@
 import {
+  Position as ChacoMatPosition,
   ChessGame,
   GameResults,
   PawnMove,
   PieceMove,
-  Position as ChacoMatPosition,
   type Move as ChacoMatMove
 } from "chacomat";
 
-export function getRandomPositionAndMove(isWhiteToMove: boolean): [Position, Move] {
-  const { fen, srcIndex, destIndex } = getRandomCapture(isWhiteToMove);
+export function getRandomPositionAndMove(whiteToMove: boolean): [Position, Move] {
+  const { fen, srcIndex, destIndex } = getRandomCapture(whiteToMove);
   const position = ChacoMatPosition.fromFEN(fen);
 
-  const board = position.board.toArray().flatMap((row) => {
-    return row.map((value) => value?.initial ?? "");
+  const board = position.board.toArray().map((row, rank) => {
+    return row.map((value, file) => {
+      const square = rank * 8 + file;
+      return { initial: value?.initial ?? "", square };
+    });
   });
 
-  const move = {
-    srcIndex,
-    destIndex,
-  };
-  const pos = {
-    board,
-    isWhiteToMove: position.activeColor.isWhite()
-  };
-
-  return [pos, move];
+  return [
+    {
+      board,
+      whiteToMove: position.activeColor.isWhite()
+    },
+    {
+      srcSquare: srcIndex,
+      destSquare: destIndex
+    }
+  ];
 }
 
-function getRandomCapture(isWhiteToMove: boolean): {
+function getRandomCapture(whiteToMove: boolean): {
   fen: string;
   srcIndex: number;
   destIndex: number;
@@ -42,7 +45,7 @@ function getRandomCapture(isWhiteToMove: boolean): {
   while (game.currentResult === GameResults.NONE) {
     const moves = game.currentPosition.legalMoves;
 
-    if (game.currentPosition.activeColor.isWhite() === isWhiteToMove) {
+    if (game.currentPosition.activeColor.isWhite() === whiteToMove) {
       const captures = moves.filter(isCapture);
 
       if (captures.length === 1) {
@@ -60,7 +63,7 @@ function getRandomCapture(isWhiteToMove: boolean): {
   }
 
   if (result.length === 0)
-    return getRandomCapture(isWhiteToMove);
+    return getRandomCapture(whiteToMove);
 
   return result[randomIndex(result.length)];
 }
@@ -75,11 +78,14 @@ function randomIndex(len: number): number {
 }
 
 export type Move = {
-  srcIndex: number;
-  destIndex: number;
+  srcSquare: number;
+  destSquare: number;
 };
 
 export type Position = {
-  board: string[];
-  isWhiteToMove: boolean;
+  board: {
+    initial: string;
+    square: number;
+  }[][];
+  whiteToMove: boolean;
 };

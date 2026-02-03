@@ -1,99 +1,87 @@
 import Piece from "$/components/Piece/Piece.tsx";
 import Square from "$/components/Square/Square.tsx";
 import type { Move, Position } from "$/utils/captures.ts";
-import { type Obs } from "reactfree-jsx";
+import classNames from "classnames";
+import { useState } from "react";
 import cssClasses from "./Board.module.scss";
 
-export default function Board({ gameObs, emitSuccess }: BoardProps) {
-  let highlightedSquare: HTMLElement | null = null;
+export default function Board({ position, move, declareSolved }: BoardProps) {
+  const [highlightedSquare, setHighlightedSquare] = useState(-1);
+  const { board, whiteToMove } = position;
 
-  const setHighlighted = (square: HTMLElement) => {
-    highlightedSquare = square;
-  };
-
-  const clearHighlightedSquare = (): void => {
-    if (highlightedSquare) {
-      highlightedSquare.dataset.highlighted = "0";
-      highlightedSquare = null;
-    }
-  };
-
-  const squares = Array.from({ length: 64 }, (_, index) => {
-    const rank = Math.floor(index / 8);
-    const file = index % 8;
-
-
-    return (
-      <Square rank={rank} file={file} setHighlighted={setHighlighted} />
-    ) as HTMLElement;
+  const boardClassName = classNames({
+    [cssClasses.Board]: true,
+    [cssClasses.reversed]: whiteToMove
   });
 
-  gameObs.subscribe(([pos, move]) => {
-    clearHighlightedSquare();
-
-    pos.board.forEach((initial, imageIndex) => {
-      const square = squares[imageIndex];
-
-      if (!initial) {
-        square.replaceChildren();
-        return;
-      }
-
-      const clearSrcSquare = () => squares[move.srcIndex].replaceChildren();
-
-      square.replaceChildren(
-        <Piece
-          initial={initial}
-          handleDragStart={createDragStartHandler(imageIndex)}
-          handleDragEnd={clearHighlightedSquare}
-          handleDrop={createDropHandler(emitSuccess, clearSrcSquare, imageIndex, move)}
-        /> as HTMLElement
-      );
-    });
+  const rowClassName = classNames({
+    [cssClasses.row]: true,
+    [cssClasses.reversed]: !whiteToMove
   });
 
   return (
-    <div
-      className={cssClasses.Board}
-      $init={(element) => {
-        for (let rank = 8 - 1; rank >= 0; rank--)
-          for (let file = 0; file < 8; file++)
-            element.append(squares[rank * 8 + file]);
-      }}
-    >
+    <div className={boardClassName}>
+      {board.map((row, y) => (
+        <article key={y} className={rowClassName}>
+          {row.map(({ initial, square }, x) => (
+            <Square
+              key={`${y}-${x}`}
+              rank={y}
+              file={x}
+              highlighted={highlightedSquare === square}
+              handleClick={() => {
+                handleSquareClick({
+                  move,
+                  declareSolved,
+                  highlightedSquare,
+                  setHighlightedSquare,
+                  currentSquare: square
+                });
+              }}
+            >
+              {initial && (<Piece initial={initial} />)}
+            </Square>
+          ))}
+        </article>
+      ))}
     </div>
   );
 }
 
-function createDragStartHandler(imageIndex: number) {
-  return (e: DragEvent) => {
-    const image = e.target as HTMLImageElement;
-    e.dataTransfer?.setData("text/plain", String(imageIndex));
-    e.dataTransfer?.setData("text/html", image.outerHTML);
-    e.dataTransfer?.setDragImage(image, image.width / 2, image.height / 2);
-  };
-}
+function handleSquareClick({
+  move,
+  declareSolved,
+  highlightedSquare,
+  setHighlightedSquare,
+  currentSquare
+}: SquareClickHandlerProps): void {
+  if (highlightedSquare === -1) {
+    setHighlightedSquare(currentSquare);
+    return;
+  }
 
-function createDropHandler(
-  emitSuccess: VoidFunction,
-  clearSrcSquare: VoidFunction,
-  imageIndex: number,
-  { srcIndex, destIndex }: Move,
-) {
-  return (e: DragEvent): void => {
-    e.preventDefault();
-    const draggedIndex = Number(e.dataTransfer?.getData("text/plain"));
+  if (highlightedSquare === currentSquare) {
+    setHighlightedSquare(-1);
+    return;
+  }
 
-    if (draggedIndex === srcIndex && imageIndex === destIndex) {
-      const imageHtml = e.dataTransfer?.getData("text/html") as string;
-      clearSrcSquare();
-      (e.target as HTMLElement).outerHTML = imageHtml;
-      emitSuccess();
-    }
-  };
+  if (highlightedSquare === move.srcSquare && currentSquare === move.destSquare) {
+    setHighlightedSquare(-1);
+    declareSolved();
+    return;
+  }
 }
 
 export type BoardProps = {
-  gameObs: Obs<[Position, Move]>;
-  emitSuccess: VoidFunction;
+  position: Position;
+  move: Move;
+  declareSolved: VoidFunction;
+};
+
+type SquareClickHandlerProps = {
+  move: Move;
+  declareSolved: VoidFunction;
+  highlightedSquare: number;
+  setHighlightedSquare: (value: number) => void;
+  currentSquare: number;
 };

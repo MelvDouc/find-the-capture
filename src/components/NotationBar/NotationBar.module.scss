@@ -7,11 +7,19 @@
     width: $size;
     height: 100%;
     flex-direction: column;
+
+    &.reversed {
+      flex-direction: column-reverse;
+    }
   }
 
   &[data-direction="h"] {
     width: 100%;
     height: $size;
+
+    &.reversed {
+      flex-direction: row-reverse;
+    }
   }
 
   @media only screen and (min-width: 300px) {

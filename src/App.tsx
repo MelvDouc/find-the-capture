@@ -1,35 +1,36 @@
 import BoardFrame from "$/components/BoardFrame/BoardFrame.tsx";
 import PlayerDisplay from "$/components/PlayerDisplay/PlayerDisplay.tsx";
-import { getRandomPositionAndMove } from "$/utils/captures.ts";
-import { obs, createRef } from "reactfree-jsx";
+import useGameState, { GameStateActionKinds as ActionKinds } from "$/hooks/useGameState.ts";
+import { useEffect, useRef } from "react";
 import cssClasses from "./App.module.scss";
 
 export default function App() {
-  let isWhiteToMove = true;
-  const gameObs = obs(getRandomPositionAndMove(isWhiteToMove));
-  const audioRef = createRef<HTMLAudioElement>();
+  const [{ position, move, solved }, dispatch] = useGameState();
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const emitSuccess = (): void => {
-    audioRef.value?.play();
-  };
+  useEffect(() => {
+    if (solved && audioRef.current)
+      audioRef.current.play().then(() => { });
+  }, [solved]);
 
   return (
-    <div className={cssClasses.App} $init={() => gameObs.notify()}>
+    <div className={cssClasses.App}>
       <section className={cssClasses.Info}>
-        <PlayerDisplay playerObs={gameObs.map(() => isWhiteToMove)} />
+        <PlayerDisplay whiteToMove={position.whiteToMove} />
       </section>
       <section className={cssClasses.BoardContainer}>
-        <BoardFrame gameObs={gameObs} emitSuccess={emitSuccess} />
+        <BoardFrame
+          position={position}
+          move={move}
+          declareSolved={() => dispatch({ kind: ActionKinds.DeclareSolved })}
+        />
       </section>
       <audio
         src={import.meta.env.BASE_URL + "audio/success2.wav"}
-        $ref={audioRef}
         preload="auto"
-        on:ended={() => {
-          isWhiteToMove = !isWhiteToMove;
-          gameObs.value = getRandomPositionAndMove(isWhiteToMove);
-        }}
+        ref={audioRef}
+        onEnded={() => dispatch({ kind: ActionKinds.GenNext })}
       ></audio>
     </div>
-  ) as HTMLElement;
+  );
 }
