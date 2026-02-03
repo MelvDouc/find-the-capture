@@ -9,9 +9,7 @@
     background-color: rgb(0, 120, 150);
   }
 
-  &.highlighted {
-    $size: 4px;
-    $others: 1px 1px rgb(155, 7, 10) inset;
-    box-shadow: $size $size $others, (-$size) (-$size) $others;
+  &[data-highlighted="1"] {
+    background-color: orange !important;
   }
 }

@@ -3,14 +3,21 @@
   width: 100%;
   aspect-ratio: 1;
   display: flex;
-  flex-direction: column;
 
-  &.reversed {
+  &[data-current-player="white"] {
     flex-direction: column-reverse;
   }
 
+  &[data-current-player="black"] {
+    flex-direction: column;
+
+    .row {
+      flex-direction: row-reverse;
+    }
+  }
+
   @container board-container (orientation: landscape) {
-    height: initial;
+    width: initial;
     height: 100%;
   }
 }
@@ -18,9 +25,5 @@
 .row {
   height: var(--sq-size);
   display: flex;
-  flex-direction: row-reverse;
-
-  &.reversed {
-    flex-direction: row;
-  }
+  flex-direction: row;
 }

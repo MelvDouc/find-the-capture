@@ -1,45 +1,37 @@
 import Piece from "$/components/Piece/Piece.tsx";
 import Square from "$/components/Square/Square.tsx";
+import useBoardState from "$/hooks/useBoardState.ts";
 import type { Move, Position } from "$/utils/captures.ts";
-import classNames from "classnames";
-import { useState } from "react";
+import { useEffect } from "react";
 import cssClasses from "./Board.module.scss";
 
-export default function Board({ position, move, declareSolved }: BoardProps) {
-  const [highlightedSquare, setHighlightedSquare] = useState(-1);
-  const { board, whiteToMove } = position;
+export default function Board({ position: { board, whiteToMove }, move, declareSolved }: BoardProps) {
+  const [boardState, dispatch] = useBoardState(move);
 
-  const boardClassName = classNames({
-    [cssClasses.Board]: true,
-    [cssClasses.reversed]: whiteToMove
-  });
-
-  const rowClassName = classNames({
-    [cssClasses.row]: true,
-    [cssClasses.reversed]: !whiteToMove
-  });
+  useEffect(() => {
+    boardState.solved && declareSolved();
+  }, [boardState.solved]);
 
   return (
-    <div className={boardClassName}>
+    <div className={cssClasses.Board} data-current-player={whiteToMove ? "white" : "black"}>
       {board.map((row, y) => (
-        <article key={y} className={rowClassName}>
+        <article key={y} className={cssClasses.row}>
           {row.map(({ initial, square }, x) => (
             <Square
               key={`${y}-${x}`}
               rank={y}
               file={x}
-              highlighted={highlightedSquare === square}
-              handleClick={() => {
-                handleSquareClick({
-                  move,
-                  declareSolved,
-                  highlightedSquare,
-                  setHighlightedSquare,
-                  currentSquare: square
-                });
-              }}
+              highlighted={boardState.highlightedSquare === square}
+              handleClick={() => dispatch({ kind: "square-click", square })}
+              handleDragEnter={() => dispatch({ kind: "drag-enter", square })}
+              handleDrop={() => dispatch({ kind: "drop", square })}
             >
-              {initial && (<Piece initial={initial} />)}
+              {initial && (
+                <Piece
+                  initial={initial}
+                  handleDragStart={() => dispatch({ kind: "drag-start", square })}
+                />
+              )}
             </Square>
           ))}
         </article>
@@ -48,40 +40,8 @@ export default function Board({ position, move, declareSolved }: BoardProps) {
   );
 }
 
-function handleSquareClick({
-  move,
-  declareSolved,
-  highlightedSquare,
-  setHighlightedSquare,
-  currentSquare
-}: SquareClickHandlerProps): void {
-  if (highlightedSquare === -1) {
-    setHighlightedSquare(currentSquare);
-    return;
-  }
-
-  if (highlightedSquare === currentSquare) {
-    setHighlightedSquare(-1);
-    return;
-  }
-
-  if (highlightedSquare === move.srcSquare && currentSquare === move.destSquare) {
-    setHighlightedSquare(-1);
-    declareSolved();
-    return;
-  }
-}
-
 export type BoardProps = {
   position: Position;
   move: Move;
   declareSolved: VoidFunction;
-};
-
-type SquareClickHandlerProps = {
-  move: Move;
-  declareSolved: VoidFunction;
-  highlightedSquare: number;
-  setHighlightedSquare: (value: number) => void;
-  currentSquare: number;
 };

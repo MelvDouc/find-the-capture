@@ -4,6 +4,7 @@ import { useReducer } from "react";
 
 export default function useGameState() {
   const [position, move] = getRandomPositionAndMove(true);
+
   return useReducer(reducer, {
     position,
     move,
